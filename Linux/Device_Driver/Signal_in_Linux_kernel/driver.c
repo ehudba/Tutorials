@@ -18,7 +18,8 @@
 #include <linux/ioctl.h>
 #include <linux/interrupt.h>
 #include <asm/io.h>
- 
+#include "linux/sched/signal.h"
+
 #define SIGETX 44
  
 #define REG_CURRENT_TASK _IOW('a','a',int32_t*)
@@ -66,7 +67,7 @@ static irqreturn_t irq_handler(int irq,void *dev_id) {
  
     if (task != NULL) {
         pr_info("Sending signal to app\n");
-        if(send_sig_info(SIGETX, &info, task) < 0) {
+        if(send_sig_info(SIGETX, (struct kernel_siginfo *)&info, task) < 0) {
             pr_info("Unable to send signal\n");
         }
     }
